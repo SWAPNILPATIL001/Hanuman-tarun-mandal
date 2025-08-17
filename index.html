@@ -17,9 +17,21 @@
       padding: 20px;
       font-size: 30px;
       font-weight: bold;
+      position: relative;
+    }
+    #balance {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background: #222;
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: bold;
     }
     table {
-      width: 80%;
+      width: 90%;
       margin: 20px auto;
       border-collapse: collapse;
       font-size: 20px;
@@ -28,8 +40,8 @@
       border: 2px solid #333;
       padding: 12px;
     }
-    tr:nth-child(even) { background: #ffe6e6; }
-    tr:nth-child(odd) { background: #e6ffe6; }
+    .credit { background-color: #d4f8d4; } /* हिरवा */
+    .debit { background-color: #f8d4d4; } /* लाल */
     button {
       background: linear-gradient(45deg, #ff9933, #ff3300);
       border: none;
@@ -40,7 +52,7 @@
       border-radius: 8px;
       font-size: 18px;
     }
-    input {
+    input, select {
       padding: 10px;
       margin: 8px;
       font-size: 18px;
@@ -48,12 +60,21 @@
   </style>
 </head>
 <body>
-  <header>🚩 हनुमान तरुण मंडळ, दौलत नगर 🚩</header>
+  <header>
+    🚩 हनुमान तरुण मंडळ, दौलत नगर 🚩
+    <div id="balance">शिल्लक: ₹0</div>
+  </header>
 
   <h2>नोंद जोडा</h2>
   <input type="date" id="date"><br>
   <input type="number" id="amount" placeholder="रक्कम (₹)"><br>
   <input type="text" id="note" placeholder="नोंद"><br>
+  
+  <select id="type">
+    <option value="credit">Credit (आवक)</option>
+    <option value="debit">Debit (खर्च)</option>
+  </select><br>
+
   <button onclick="addRecord()">नोंद जोडा</button>
 
   <h2>सर्वांचा इतिहास</h2>
@@ -61,12 +82,13 @@
     <tr>
       <th>तारीख</th>
       <th>रक्कम (₹)</th>
+      <th>प्रकार</th>
       <th>नोंद</th>
     </tr>
   </table>
 
   <script>
-    // 🔹 Firebase Config (तुझा)
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyB2CY5tJ9E7yH0sR18xjrHjqEZdhb3Gn7A",
       authDomain: "hanuman-tarun-mandal.firebaseapp.com",
@@ -78,21 +100,25 @@
       measurementId: "G-SZDFEVGEBL"
     };
 
-    // Initialize Firebase (v8)
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
+    let totalBalance = 0;
 
     // Add Record
     function addRecord() {
       const date = document.getElementById("date").value;
-      const amount = document.getElementById("amount").value;
+      const amount = parseFloat(document.getElementById("amount").value);
       const note = document.getElementById("note").value;
+      const type = document.getElementById("type").value;
 
       if(date && amount && note){
         db.ref("records").push({
           date: date,
           amount: amount,
-          note: note
+          note: note,
+          type: type
         });
       }
 
@@ -106,9 +132,22 @@
     db.ref("records").on("child_added", function(snapshot) {
       const data = snapshot.val();
       const row = table.insertRow(-1);
+
+      // वेगळा रंग प्रकारावर अवलंबून
+      row.className = (data.type === "credit") ? "credit" : "debit";
+
       row.insertCell(0).innerText = data.date;
       row.insertCell(1).innerText = "₹" + data.amount;
-      row.insertCell(2).innerText = data.note;
+      row.insertCell(2).innerText = (data.type === "credit") ? "आवक" : "खर्च";
+      row.insertCell(3).innerText = data.note;
+
+      // Balance Update
+      if(data.type === "credit"){
+        totalBalance += parseFloat(data.amount);
+      } else {
+        totalBalance -= parseFloat(data.amount);
+      }
+      document.getElementById("balance").innerText = "शिल्लक: ₹" + totalBalance;
     });
   </script>
 </body>
