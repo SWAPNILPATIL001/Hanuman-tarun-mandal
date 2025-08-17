@@ -2,9 +2,9 @@
 <html lang="mr">
 <head>
   <meta charset="UTF-8">
-  <title>हनुमान तरुण मंडळ, दौलत नगर</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <title>🚩 हनुमान तरुण मंडळ, दौलत नगर 🚩</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
     body {
       font-family: 'Baloo Bhai 2', cursive;
@@ -65,7 +65,7 @@
     </tr>
   </table>
 
-<script>
+  <script>
     // 🔹 Firebase Config (तुझा)
     const firebaseConfig = {
       apiKey: "AIzaSyB2CY5tJ9E7yH0sR18xjrHjqEZdhb3Gn7A",
@@ -76,9 +76,10 @@
       messagingSenderId: "882742921363",
       appId: "1:882742921363:web:b143f2eb32e48e792c2566",
       measurementId: "G-SZDFEVGEBL"
+    };
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
+    // Initialize Firebase (v8)
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     // Add Record
@@ -87,11 +88,13 @@
       const amount = document.getElementById("amount").value;
       const note = document.getElementById("note").value;
 
-      db.ref("records").push({
-        date: date,
-        amount: amount,
-        note: note
-      });
+      if(date && amount && note){
+        db.ref("records").push({
+          date: date,
+          amount: amount,
+          note: note
+        });
+      }
 
       document.getElementById("date").value = "";
       document.getElementById("amount").value = "";
