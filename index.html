@@ -86,7 +86,7 @@
       <input type="number" id="amount" placeholder="रक्कम (₹)" />
       <input type="text" id="note" placeholder="नोंद" />
       <select id="type">
-        <option value="credit">Credit (आवक)</option>
+        <option value="credit">Credit (जमा)</option>
         <option value="debit">Debit (खर्च)</option>
       </select>
       <button id="addBtn">नोंद जोडा</button>
@@ -176,7 +176,7 @@
         tr.innerHTML =
           `<td>${r.date||''}</td>
            <td>₹${Number(r.amount||0)}</td>
-           <td>${r.type==='credit'?'आवक':'खर्च'}</td>
+           <td>${r.type==='credit'?'जमा':'खर्च'}</td>
            <td>${r.note||''}</td>`;
         tbody.appendChild(tr);
 
@@ -184,7 +184,7 @@
         if (r.type === 'credit') totalCredit += amt;
         else totalDebit += amt;
 
-        allRecords.push([r.date, amt, (r.type==='credit'?'आवक':'खर्च'), r.note]);
+        allRecords.push([r.date, amt, (r.type==='credit'?'जमा':'खर्च'), r.note]);
       });
 
       // Balance
