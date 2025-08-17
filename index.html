@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <title>हनुमान तरुण मंडळ, दौलत नगर</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: 'Baloo Bhai 2', cursive;
+      background: #fff8dc;
+      text-align: center;
+    }
+    header {
+      background: linear-gradient(90deg, #ff9933, #ff3300);
+      color: white;
+      padding: 20px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      font-size: 20px;
+    }
+    th, td {
+      border: 2px solid #333;
+      padding: 12px;
+    }
+    tr:nth-child(even) { background: #ffe6e6; }
+    tr:nth-child(odd) { background: #e6ffe6; }
+    button {
+      background: linear-gradient(45deg, #ff9933, #ff3300);
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+    input {
+      padding: 10px;
+      margin: 8px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <header>🚩 हनुमान तरुण मंडळ, दौलत नगर 🚩</header>
+
+  <h2>नोंद जोडा</h2>
+  <input type="date" id="date"><br>
+  <input type="number" id="amount" placeholder="रक्कम (₹)"><br>
+  <input type="text" id="note" placeholder="नोंद"><br>
+  <button onclick="addRecord()">नोंद जोडा</button>
+
+  <h2>सर्वांचा इतिहास</h2>
+  <table id="recordsTable">
+    <tr>
+      <th>तारीख</th>
+      <th>रक्कम (₹)</th>
+      <th>नोंद</th>
+    </tr>
+  </table>
+
+  <script>
+    // 🔹 तुमचा Firebase Config इथे द्या
+    const firebaseConfig = {
+   apiKey: "AIzaSyCMzIzcShaNZrAtmxAE-_sY2JQuXn_zOdg",
+    authDomain: "mandalsaving.firebaseapp.com",
+    projectId: "mandalsaving",
+    storageBucket: "mandalsaving.firebasestorage.app",
+    messagingSenderId: "383737474637",
+    C appId: "1:383737474637:web:27a89d42deaf12337b7604"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Add Record
+    function addRecord() {
+      const date = document.getElementById("date").value;
+      const amount = document.getElementById("amount").value;
+      const note = document.getElementById("note").value;
+
+      db.ref("records").push({
+        date: date,
+        amount: amount,
+        note: note
+      });
+
+      document.getElementById("date").value = "";
+      document.getElementById("amount").value = "";
+      document.getElementById("note").value = "";
+    }
+
+    // Show Records Live
+    const table = document.getElementById("recordsTable");
+    db.ref("records").on("child_added", function(snapshot) {
+      const data = snapshot.val();
+      const row = table.insertRow(-1);
+      row.insertCell(0).innerText = data.date;
+      row.insertCell(1).innerText = "₹" + data.amount;
+      row.insertCell(2).innerText = data.note;
+    });
+  </script>
+</body>
+</html>
